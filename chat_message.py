@@ -4,6 +4,8 @@ class Message():
         self.user=user
         self.text=text
         self.message_type=message_type
+        # TODO: Add property: public key for each user #
+
         
 class ChatMessage(ft.Row):
     def __init__(self, message: Message):
