@@ -10,6 +10,8 @@ def main(page: ft.Page):
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
 
+    # TODO: Generate Elliptic Curve #
+
     # ***************  Functions             *************
     def dropdown_changed(e):
         new_message.value = new_message.value + emoji_list.value
@@ -20,7 +22,7 @@ def main(page: ft.Page):
         page.update()
 
     def open_dlg():
-        page.dialog = dlg
+        page.overlay.append(dlg)
         dlg.open = True
         page.update()
 
@@ -36,14 +38,16 @@ def main(page: ft.Page):
             page.banner.open = True
             page.update()
         else:
+            # TODO: Generate private key and public key for this user #
             print("Redirecting to chat...")
-            page.session.set("user", user)
+            page.session.set("user", user) # TODO: Save private key for this user # 
             page.route = "/chat"
             page.pubsub.send_all(
                 Message(
                     user=user,
                     text=f"{user} has joined the chat.",
                     message_type="login_message",
+                    # TODO: Send public key for all user message_type = "public_key message" #
                 )
             )
             page.update()
@@ -56,9 +60,11 @@ def main(page: ft.Page):
 
     def on_message(message: Message):
         if message.message_type == "chat_message":
+            # TODO: Verify message with signature, if correct, display it and vice verse #
             m = ChatMessage(message)
         elif message.message_type == "login_message":
-            m = ft.Text(message.text, italic=True, color=ft.colors.WHITE, size=12)
+            m = ft.Text(message.text, italic=True, color=ft.Colors.WHITE, size=12)
+        # TODO: Receive public key of user #
         chat.controls.append(m)
         page.update()
 
@@ -91,8 +97,8 @@ def main(page: ft.Page):
     # ************          Aplication UI              **********************************
     principal_content = ft.Column(
         [
-            ft.Icon(ft.icons.WECHAT, size=200, color=ft.colors.BLUE),
-            ft.Text(value="Chat Flet Messenger", size=50, color=ft.colors.WHITE),
+            ft.Icon(ft.Icons.WECHAT, size=200, color=ft.Colors.BLUE),
+            ft.Text(value="Chat Flet Messenger", size=50, color=ft.Colors.BLACK),
         ],
         height=400,
         width=600,
@@ -134,8 +140,8 @@ def main(page: ft.Page):
         width=50,
         value="😃",
         alignment=ft.alignment.center,
-        border_color=ft.colors.AMBER,
-        color=ft.colors.AMBER,
+        border_color=ft.Colors.AMBER,
+        color=ft.Colors.AMBER,
     )
 
     signin_UI = SignInForm(sign_in, btn_signup)
@@ -158,20 +164,20 @@ def main(page: ft.Page):
         on_submit=send_message_click,
     )
 
-    page.banner = ft.Banner(
-        bgcolor=ft.colors.BLACK45,
-        leading=ft.Icon(ft.icons.ERROR, color=ft.colors.RED, size=40),
+    page.overlay.append(ft.Banner(
+        bgcolor=ft.Colors.BLACK45,
+        leading=ft.Icon(ft.Icons.ERROR, color=ft.Colors.RED, size=40),
         content=ft.Text("Log in failed, Incorrect User Name or Password"),
         actions=[
             ft.TextButton("Ok", on_click=close_banner),
         ],
-    )
+    ))
 
     dlg = ft.AlertDialog(
         modal=True,
         title=ft.Container(
             content=ft.Icon(
-                name=ft.icons.CHECK_CIRCLE_OUTLINED, color=ft.colors.GREEN, size=100
+                name=ft.Icons.CHECK_CIRCLE_OUTLINED, color=ft.Colors.GREEN, size=100
             ),
             width=120,
             height=120,
@@ -182,7 +188,7 @@ def main(page: ft.Page):
         ),
         actions=[
             ft.ElevatedButton(
-                text="Continue", color=ft.colors.WHITE, on_click=close_dlg
+                text="Continue", color=ft.Colors.WHITE, on_click=close_dlg
             )
         ],
         actions_alignment="center",
@@ -215,10 +221,10 @@ def main(page: ft.Page):
                 page.add(
                     ft.Row(
                         [
-                            ft.Text(value="Chat Flet Messenger", color=ft.colors.WHITE),
+                            ft.Text(value="Chat Flet Messenger", color=ft.Colors.WHITE),
                             ft.ElevatedButton(
                                 text="Log Out",
-                                bgcolor=ft.colors.RED_800,
+                                bgcolor=ft.Colors.RED_800,
                                 on_click=btn_exit,
                             ),
                         ],
@@ -228,7 +234,7 @@ def main(page: ft.Page):
                 page.add(
                     ft.Container(
                         content=chat,
-                        border=ft.border.all(1, ft.colors.OUTLINE),
+                        border=ft.border.all(1, ft.Colors.OUTLINE),
                         border_radius=5,
                         padding=10,
                         expand=True,
@@ -240,7 +246,7 @@ def main(page: ft.Page):
                             emoji_list,
                             new_message,
                             ft.IconButton(
-                                icon=ft.icons.SEND_ROUNDED,
+                                icon=ft.Icons.SEND_ROUNDED,
                                 tooltip="Send message",
                                 on_click=send_message_click,
                             ),
