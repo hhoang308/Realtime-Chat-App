@@ -3,6 +3,8 @@ from signin_form import *
 from signup_form import *
 from users_db import *
 from chat_message import *
+from cryptography.hazmat.primitives.asymmetric import ec
+from cryptography.hazmat.primitives import hashes
 
 
 def main(page: ft.Page):
@@ -39,6 +41,21 @@ def main(page: ft.Page):
             page.update()
         else:
             # TODO: Generate private key and public key for this user #
+            private_key = ec.generate_private_key(ec.SECP256R1())
+            public_key = private_key.public_key()
+
+            if db.write_private_key(user, private_key) == False or db.write_public_key(user, public_key) == False:
+                print(f'Keys for ${user} saved failed.')
+            else:
+                print(f'Keys for ${user} saved success.')
+
+            retrieved_private_key = db.read_private_key(user)
+            print("Private Key:", retrieved_private_key)
+
+            # Đọc khóa công khai
+            retrieved_public_key = db.read_public_key(user)
+            print("Public Key:", retrieved_public_key)
+
             print("Redirecting to chat...")
             page.session.set("user", user) # TODO: Save private key for this user # 
             page.route = "/chat"
