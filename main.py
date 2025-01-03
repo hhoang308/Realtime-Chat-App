@@ -5,6 +5,7 @@ from users_db import *
 from chat_message import *
 from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.primitives import hashes
+from cryptography.exceptions import InvalidSignature
 
 
 def main(page: ft.Page):
@@ -15,6 +16,24 @@ def main(page: ft.Page):
     # TODO: Generate Elliptic Curve #
 
     # ***************  Functions             *************
+    def sign_message(private_key, message):
+        signature = private_key.sign(
+            message.encode(),  # Mã hóa bản tin thành bytes
+            ec.ECDSA(hashes.SHA256())  # Sử dụng ECDSA với thuật toán băm SHA-256
+        )
+        return signature
+    
+    def verify_signature(public_key, message, signature):
+        try:
+            public_key.verify(
+                signature,  # Chữ ký cần xác minh
+                message.encode(),  # Bản tin cần xác minh
+                ec.ECDSA(hashes.SHA256())  # Thuật toán băm SHA-256
+            )
+            return True
+        except InvalidSignature:
+            return False
+    
     def dropdown_changed(e):
         new_message.value = new_message.value + emoji_list.value
         page.update()
@@ -45,9 +64,9 @@ def main(page: ft.Page):
             public_key = private_key.public_key()
 
             if db.write_private_key(user, private_key) == False or db.write_public_key(user, public_key) == False:
-                print(f'Keys for ${user} saved failed.')
+                print(f'Keys for {user} saved failed.')
             else:
-                print(f'Keys for ${user} saved success.')
+                print(f'Keys for {user} saved success.')
 
             retrieved_private_key = db.read_private_key(user)
             print("Private Key:", retrieved_private_key)
@@ -64,6 +83,7 @@ def main(page: ft.Page):
                     user=user,
                     text=f"{user} has joined the chat.",
                     message_type="login_message",
+                    signature=""
                     # TODO: Send public key for all user message_type = "public_key message" #
                 )
             )
@@ -78,6 +98,13 @@ def main(page: ft.Page):
     def on_message(message: Message):
         if message.message_type == "chat_message":
             # TODO: Verify message with signature, if correct, display it and vice verse #
+            db = UsersDB()
+            retrieved_public_key = db.read_public_key(message.user)
+            is_valid = verify_signature(retrieved_public_key, message.text, message.signature)
+            if is_valid == True:
+                print("Chữ ký hợp lệ")
+            else:
+                print("Chữ ký không hợp lệ")
             m = ChatMessage(message)
         elif message.message_type == "login_message":
             m = ft.Text(message.text, italic=True, color=ft.Colors.WHITE, size=12)
@@ -88,11 +115,17 @@ def main(page: ft.Page):
     page.pubsub.subscribe(on_message)
 
     def send_message_click(e):
+        db = UsersDB()
+        user = page.session.get("user")
+        retrieved_private_key = db.read_private_key(user)
+        signature = sign_message(retrieved_private_key, new_message.value)
+        print(f"Chữ ký: {signature}")
         page.pubsub.send_all(
             Message(
-                user=page.session.get("user"),
+                user=user,
                 text=new_message.value,
                 message_type="chat_message",
+                signature=signature,
             )
         )
         new_message.value = ""

@@ -1,9 +1,12 @@
 import flet as ft
+from cryptography.hazmat.primitives.asymmetric import ec
+
 class Message():
-    def __init__(self,user:str,text:str,message_type:str):
+    def __init__(self,user:str,text:str,message_type:str,signature):
         self.user=user
         self.text=text
         self.message_type=message_type
+        self.signature=signature
         # TODO: Add property: public key for each user #
 
         

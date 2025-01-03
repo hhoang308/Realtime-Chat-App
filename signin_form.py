@@ -34,8 +34,18 @@ class SignInForm(ft.UserControl):
         self.text_password = ft.TextField(
             label="Password", password=True, can_reveal_password=True
         )
-        self.text_signin=ft.ElevatedButton(text="Sign in",color=ft.colors.BLACK,width=150,height=50,on_click= self.btn_signin)
-        self.text_signup=ft.Row(controls=[ft.Text(value="Don't have a account?"),ft.TextButton(text="Sign Up Here",on_click=self.btn_signup)],alignment=ft.MainAxisAlignment.CENTER)
+        self.text_signin=ft.ElevatedButton(text="Sign in",color=ft.colors.BLACK,bgcolor=ft.colors.WHITE,width=150,height=50,on_click= self.btn_signin)
+        self.text_signup = ft.Row(
+            controls=[
+                ft.Text(value="Don't have an account? "),
+                ft.TextButton(
+                    text="Sign Up Here", 
+                    on_click=self.btn_signup,
+                    style=ft.ButtonStyle(color=ft.colors.BLACK)  # Set text color using style
+                ),
+            ],
+            alignment=ft.MainAxisAlignment.CENTER,
+        )
         
 
         return ft.Container(

@@ -26,8 +26,9 @@ class SignUpForm(ft.UserControl):
         self.text_password = ft.TextField(
             label="Password", password=True, can_reveal_password=True
         )
-        self.text_signup=ft.ElevatedButton(text="Sign up",color=ft.colors.WHITE,width=150,height=50,on_click= self.btn_signup)
-        self.text_signin=ft.Row(controls=[ft.Text(value="Already have an account?"),ft.TextButton(text="Sign in",on_click=self.btn_signin)],alignment=ft.MainAxisAlignment.CENTER)
+        self.text_signup=ft.ElevatedButton(text="Sign up",color=ft.colors.BLACK,bgcolor=ft.colors.WHITE,width=150,height=50,on_click= self.btn_signup)
+        self.text_signin=ft.Row(controls=[ft.Text(value="Already have an account?"),
+                                          ft.TextButton(text="Sign in",on_click=self.btn_signin,style=ft.ButtonStyle(color=ft.colors.BLACK))],alignment=ft.MainAxisAlignment.CENTER)
         
 
         return ft.Container(
