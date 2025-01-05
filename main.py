@@ -223,6 +223,8 @@ def main(page: ft.Page):
         ],
     ))
 
+    # TODO: Create Dialog, user select Elliptic Curve and encryption algorithm #
+
     dlg = ft.AlertDialog(
         modal=True,
         title=ft.Container(

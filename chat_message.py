@@ -27,6 +27,13 @@ class ChatMessage(ft.Row):
                     ],
                     tight=True,
                     spacing=5,
+                    expand=True,
+                ),
+                ft.IconButton(
+                    icon=ft.Icons.MORE_VERT,
+                    icon_color="blue400",
+                    icon_size=20,
+                    tooltip="Pause record",
                 ),
             ]
 
