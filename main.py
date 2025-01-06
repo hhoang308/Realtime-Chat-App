@@ -105,7 +105,7 @@ def main(page: ft.Page):
                 print("Chữ ký hợp lệ")
             else:
                 print("Chữ ký không hợp lệ")
-            m = ChatMessage(message)
+            m = ChatMessage(message, page)
         elif message.message_type == "login_message":
             m = ft.Text(message.text, italic=True, color=ft.Colors.WHITE, size=12)
         # TODO: Receive public key of user #
@@ -223,7 +223,6 @@ def main(page: ft.Page):
         ],
     ))
 
-    # TODO: Create Dialog, user select Elliptic Curve and encryption algorithm #
 
     dlg = ft.AlertDialog(
         modal=True,

@@ -1,0 +1,24 @@
+@startuml
+
+actor User as user
+database Server as server
+
+opt account exists
+user -> server : sign-in
+server -> server : validate
+server --> user : response
+user -> user : create private-key & public-key
+else account doesn't exist
+user -> server : sign-up
+server -> server : store username and password
+server --> user : response
+end
+loop user log-out
+user -> user : write message
+user -> user : sign & encrypt message
+user -> server : send cipher message
+server -> server : decrypt & validate message
+server -> : send message to all
+end
+
+@enduml

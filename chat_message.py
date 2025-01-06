@@ -11,32 +11,60 @@ class Message():
 
         
 class ChatMessage(ft.Row):
-    def __init__(self, message: Message):
+    def __init__(self, message: Message, page: ft.Page):
         super().__init__()
-        self.vertical_alignment="start"
-        self.controls=[
-                ft.CircleAvatar(
-                    content=ft.Text(self.get_initials(message.user)),
-                    color=ft.colors.WHITE,
-                    bgcolor=self.get_avatar_color(message.user),
-                ),
-                ft.Column(
-                    [
-                        ft.Text(message.user, weight="bold"),
-                        ft.Text(message.text, selectable=True),
-                    ],
-                    tight=True,
-                    spacing=5,
-                    expand=True,
-                ),
-                ft.IconButton(
-                    icon=ft.Icons.MORE_VERT,
-                    icon_color="blue400",
-                    icon_size=20,
-                    tooltip="Pause record",
-                ),
-            ]
+        self.vertical_alignment = "start"
+        self.page = page
 
+        # Define the alert dialog
+        self.message_information_dialog = ft.AlertDialog(
+            title=ft.Text("Message Information"),
+            content=ft.Column(
+                [
+                    ft.Text("Plain Text: " + message.text, selectable=True),
+                    ft.Text("Signature: " + message.signature.hex())
+                ],
+                tight=True,  # Optional: giảm khoảng cách giữa các phần tử
+            ),
+            actions=[
+                ft.TextButton("Close", on_click=lambda e: self.close_dlg())
+            ],
+        )
+
+        # Add controls for the ChatMessage
+        self.controls = [
+            ft.CircleAvatar(
+                content=ft.Text(self.get_initials(message.user)),
+                color=ft.colors.WHITE,
+                bgcolor=self.get_avatar_color(message.user),
+            ),
+            ft.Column(
+                [
+                    ft.Text(message.user, weight="bold"),
+                    ft.Text(message.text, selectable=True),
+                ],
+                tight=True,
+                spacing=5,
+                expand=True,
+            ),
+            ft.IconButton(
+                icon=ft.Icons.MORE_VERT,
+                icon_color="blue400",
+                icon_size=20,
+                tooltip="Show details",
+                on_click=lambda e: self.open_dlg(),
+            ),
+        ]
+
+    def open_dlg(self):
+        self.page.dialog = self.message_information_dialog
+        self.message_information_dialog.open = True
+        self.page.update()
+
+    def close_dlg(self):
+        self.message_information_dialog.open = False
+        self.page.update()
+    
     def get_initials(self, user: str):
         return user[:1].capitalize()
 
